@@ -8,7 +8,7 @@ class DetailCard extends StatelessWidget {
   final int femaleEmployed;
   final Map<String, dynamic> educationSummary;
 
-  DetailCard({
+  const DetailCard({super.key, 
     required this.malePopulation,
     required this.femalePopulation,
     required this.maleEmployed,
@@ -36,7 +36,7 @@ class DetailCard extends StatelessWidget {
           Center(
             child: Column(
               children: [
-                Container(
+                SizedBox(
                   height: 200,
                   child: PieChart(
                     PieChartData(
@@ -77,7 +77,7 @@ class DetailCard extends StatelessWidget {
           ),
           SizedBox(height: 16),
           // Education Bar Chart
-          Container(
+          SizedBox(
             height: 200,
             child: BarChart(
               BarChartData(
@@ -187,7 +187,7 @@ class DetailCard extends StatelessWidget {
           Center(
             child: Column(
               children: [
-                Container(
+                SizedBox(
                   height: 200,
                   child: PieChart(
                     PieChartData(
