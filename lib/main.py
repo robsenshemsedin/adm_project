@@ -26,6 +26,34 @@ regions_collection = db["regions"]
 def root():
     return {"message": "Welcome to the Italian Census Data API!"}
 
+@app.get("/municipalities/{municipality_name}")
+def get_municipality_details(municipality_name: str):
+    try:
+        # Query for a specific municipality
+        municipality = regions_collection.find_one(
+            {"municipality": municipality_name},
+            {"_id": 0}
+        )
+        if not municipality:
+            raise HTTPException(status_code=404, detail="Municipality not found")
+        return {"municipality": municipality}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/provinces/{province_name}")
+def get_province_details(province_name: str):
+    try:
+        # Query all municipalities under the province
+        province_data = list(regions_collection.find(
+            {"province": province_name},
+            {"_id": 0}
+        ))
+        if not province_data:
+            raise HTTPException(status_code=404, detail="Province not found")
+        return {"province": province_name, "data": province_data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Get all distinct regions
 @app.get("/regions")
 def get_regions():
