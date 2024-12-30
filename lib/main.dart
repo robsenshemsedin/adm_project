@@ -11,7 +11,9 @@ class CensusApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Italian Census',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+     colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green),
+        primarySwatch: Colors.green,primaryColor: Colors.red),
       home: HomeScreen(),
     );
   }
