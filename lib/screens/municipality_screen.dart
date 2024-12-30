@@ -1,5 +1,6 @@
 import 'package:adm_project/services/api_service.dart';
 import 'package:adm_project/widgets/detail_card.dart';
+
 import 'package:flutter/material.dart';
 
 class MunicipalityScreen extends StatelessWidget {
@@ -15,13 +16,24 @@ class MunicipalityScreen extends StatelessWidget {
     return response;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(municipalityName),
-      ),
+        leading: IconButton(onPressed: (){
+          Navigator.of(context).pop();
+        }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
+       title: Text(
+         municipalityName,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+   
+        backgroundColor: Colors.green[800], // Inspired by the green in the Italian flag
+        elevation: 0,
+        
+),
       body: FutureBuilder<Map<String, dynamic>>(
         future: fetchMunicipalityData(municipalityName),
         builder: (context, snapshot) {
@@ -38,36 +50,19 @@ class MunicipalityScreen extends StatelessWidget {
           final education = municipalityData['education'] ?? {};
           final employment = municipalityData['employment'] ?? {};
 
-          return ListView(
+          return 
+          
+      Row(
             children: [
-              DetailCard(
-                title: 'Population',
-                content: '''
-Total: ${population['total'] ?? 'N/A'}
-Male: ${population['male'] ?? 'N/A'}
-Female: ${population['female'] ?? 'N/A'}
-                ''',
-              ),
-              DetailCard(
-                title: 'Education',
-                content: '''
-No Education: ${education['no_education'] ?? 'N/A'}
-Elementary: ${education['elementary'] ?? 'N/A'}
-Middle: ${education['middle'] ?? 'N/A'}
-High School: ${education['high_school'] ?? 'N/A'}
-Tertiary: ${education['tertiary'] ?? 'N/A'}
-                ''',
-              ),
-              DetailCard(
-                title: 'Employment',
-                content: '''
-Total Employed: ${employment['total_employed'] ?? 'N/A'}
-Male Employed: ${employment['male_employed'] ?? 'N/A'}
-Female Employed: ${employment['female_employed'] ?? 'N/A'}
-                ''',
-              ),
-            ],
-          );
+              // Summary Details
+                 DetailCard(malePopulation: population['male'] , femalePopulation: population['female'], maleEmployed: employment['male_employed'] as int, femaleEmployed: employment['female_employed'] as int, educationSummary: education)
+  ,
+
+  Expanded(
+ flex: 1,
+ child:  Container() )]
+    );
+
         },
       ),
     );

@@ -27,8 +27,20 @@ class ProvinceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(provinceName),
-      ),
+        leading: IconButton(onPressed: (){
+          Navigator.of(context).pop();
+        }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
+       title: Text(
+         provinceName,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+   
+        backgroundColor: Colors.green[800], // Inspired by the green in the Italian flag
+        elevation: 0,
+        
+),
       body: FutureBuilder<Map<String, dynamic>>(
         future: fetchProvinceData(provinceName),
         builder: (context, snapshot) {
@@ -85,58 +97,41 @@ class ProvinceScreen extends StatelessWidget {
                 employmentSummary['male_employed']! + (employment['male_employed'] ?? 0) as int;
             employmentSummary['female_employed'] =
                 employmentSummary['female_employed']! + (employment['female_employed'] ?? 0) as int;
+                final employmentSummarymale = employmentSummary['male_employed'];
+                  final employmentSummaryFemale= employmentSummary['female_employed'];
           }
 
-          return ListView(
+
+          return Row(
             children: [
               // Summary Details
-              DetailCard(
-                title: 'Population',
-                content: '''
-Total: $totalPopulation
-Male: $malePopulation
-Female: $femalePopulation
-                ''',
-              ),
-              DetailCard(
-                title: 'Education',
-                content: '''
-No Education: ${educationSummary['no_education']}
-Elementary: ${educationSummary['elementary']}
-Middle: ${educationSummary['middle']}
-High School: ${educationSummary['high_school']}
-Tertiary: ${educationSummary['tertiary']}
-                ''',
-              ),
-              DetailCard(
-                title: 'Employment',
-                content: '''
-Total Employed: ${employmentSummary['total_employed']}
-Male Employed: ${employmentSummary['male_employed']}
-Female Employed: ${employmentSummary['female_employed']}
-                ''',
-              ),
-              // Municipalities List
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Municipalities',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: municipalities.length,
-                itemBuilder: (context, index) {
-                  final municipality = municipalities[index]['municipality'];
-                  return ListTile(
-                    title: Text(municipality ?? 'Unknown'),
-                    onTap: () {
-                      Navigator.push(
+                 DetailCard(malePopulation: malePopulation, femalePopulation: femalePopulation, maleEmployed: employmentSummary['male_employed'] as int, femaleEmployed: employmentSummary['female_employed'] as int, educationSummary: educationSummary)
+  ,
+
+              Expanded(
+  flex: 1,
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          "Municipalities",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.green[800],
+          ),
+        ),
+      ),
+      Expanded(
+        child: ListView.builder(
+          itemCount:municipalities.length,
+          itemBuilder: (context, index) {
+           final municipality = municipalities[index]['municipality'];
+            return GestureDetector(
+              onTap: () {
+                 Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => MunicipalityScreen(
@@ -144,13 +139,59 @@ Female Employed: ${employmentSummary['female_employed']}
                           ),
                         ),
                       );
-                    },
-                  );
-                },
+              },
+              child: Card(
+                elevation: 4,
+                shadowColor: Colors.red[700] ,
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                     municipality ?? 'Unknown',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
               ),
-            ],
+            );
+          },
+        ),
+           ),
+            
+      
+            ],   ),   ),]  
           );
         },
+      ),
+    );
+  }
+}
+
+class _DetailCard extends StatelessWidget {
+  final String title;
+  final String content;
+
+  _DetailCard({required this.title, required this.content});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.all(8.0),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            SizedBox(height: 8.0),
+            Text(content),
+          ],
+        ),
       ),
     );
   }

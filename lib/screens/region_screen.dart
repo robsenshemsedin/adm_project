@@ -1,8 +1,8 @@
+import 'package:adm_project/widgets/detail_card.dart';
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import 'province_screen.dart';
-import '../widgets/detail_card.dart';
-import '../widgets/list_item.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class RegionScreen extends StatelessWidget {
   final String regionName;
@@ -13,11 +13,24 @@ class RegionScreen extends StatelessWidget {
     return await fetchRegionDetails(regionName); // API call to get region details
   }
 
- 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(regionName)),
+      appBar: AppBar(
+        leading: IconButton(onPressed: (){
+          Navigator.of(context).pop();
+        }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
+       title: Text(
+         regionName,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+   
+        backgroundColor: Colors.green[800], // Inspired by the green in the Italian flag
+        elevation: 0,
+        
+),
       body: FutureBuilder<Map<String, dynamic>>(
         future: fetchRegionData(),
         builder: (context, snapshot) {
@@ -33,8 +46,6 @@ class RegionScreen extends StatelessWidget {
 
           final regionData = snapshot.data!;
           final provinces = regionData['data'] ?? [];
-
-          // Extract unique provinces
           final uniqueProvinces = provinces
               .map((province) => province['province'])
               .toSet()
@@ -45,17 +56,13 @@ class RegionScreen extends StatelessWidget {
           int malePopulation = 0;
           int femalePopulation = 0;
           Map<String, int> educationSummary = {
-            "no_education": 0,
-            "elementary": 0,
-            "middle": 0,
-            "high_school": 0,
-            "tertiary": 0,
+            "No Education": 0,
+            "Elementary": 0,
+            "Middle": 0,
+            "High School": 0,
+            "Tertiary": 0,
           };
-          Map<String, int> employmentSummary = {
-            "total_employed": 0,
-            "male_employed": 0,
-            "female_employed": 0,
-          };
+          int totalEmployment = 0, maleEmployed = 0, femaleEmployed = 0;
 
           for (var province in provinces) {
             final population = province['population'] ?? {};
@@ -64,87 +71,89 @@ class RegionScreen extends StatelessWidget {
             femalePopulation += (population['female'] ?? 0) as int;
 
             final education = province['education'] ?? {};
-            educationSummary['no_education'] =
-                educationSummary['no_education']! + (education['no_education'] ?? 0) as int;
-            educationSummary['elementary'] =
-                educationSummary['elementary']! + (education['elementary'] ?? 0) as int;
-            educationSummary['middle'] =
-                educationSummary['middle']! + (education['middle'] ?? 0) as int;
-            educationSummary['high_school'] =
-                educationSummary['high_school']! + (education['high_school'] ?? 0) as int;
-            educationSummary['tertiary'] =
-                educationSummary['tertiary']! + (education['tertiary'] ?? 0) as int;
+       educationSummary['No Education'] =
+    (educationSummary['No Education'] ?? 0) +
+    (education['no_education'] ?? 0) as int;
+educationSummary['Elementary'] =
+    (educationSummary['Elementary'] ?? 0) +
+    (education['elementary'] ?? 0) as int;
+educationSummary['Middle'] =
+    (educationSummary['Middle'] ?? 0) +
+    (education['middle'] ?? 0) as int;
+educationSummary['High School'] =
+    (educationSummary['High School'] ?? 0) +
+    (education['high_school'] ?? 0) as int;
+educationSummary['Tertiary'] =
+    (educationSummary['Tertiary'] ?? 0) +
+    (education['tertiary'] ?? 0) as int;
+
 
             final employment = province['employment'] ?? {};
-            employmentSummary['total_employed'] =
-                employmentSummary['total_employed']! + (employment['total_employed'] ?? 0) as int;
-            employmentSummary['male_employed'] =
-                employmentSummary['male_employed']! + (employment['male_employed'] ?? 0) as int;
-            employmentSummary['female_employed'] =
-                employmentSummary['female_employed']! + (employment['female_employed'] ?? 0) as int;
+            totalEmployment += (employment['total_employed'] ?? 0) as int;
+            maleEmployed += (employment['male_employed'] ?? 0) as int;
+            femaleEmployed += (employment['female_employed'] ?? 0) as int;
           }
 
-          return ListView(
+          return Row(
             children: [
-              // Summary Details
-              DetailCard(
-                title: 'Population',
-                content: '''
-Total: $totalPopulation
-Male: $malePopulation
-Female: $femalePopulation
-                ''',
-              ),
-              DetailCard(
-                title: 'Education',
-                content: '''
-No Education: ${educationSummary['no_education']}
-Elementary: ${educationSummary['elementary']}
-Middle: ${educationSummary['middle']}
-High School: ${educationSummary['high_school']}
-Tertiary: ${educationSummary['tertiary']}
-                ''',
-              ),
-              DetailCard(
-                title: 'Employment',
-                content: '''
-Total Employed: ${employmentSummary['total_employed']}
-Male Employed: ${employmentSummary['male_employed']}
-Female Employed: ${employmentSummary['female_employed']}
-                ''',
-              ),
-              // Provinces List
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Provinces',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
+              // Left side: Visualization Section
+             DetailCard(femalePopulation: femalePopulation, malePopulation: malePopulation, maleEmployed: maleEmployed, educationSummary: educationSummary, femaleEmployed: femaleEmployed),
+              // Right side: Province List
+             Expanded(
+  flex: 1,
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          "Provinces",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.green[800],
+          ),
+        ),
+      ),
+      Expanded(
+        child: ListView.builder(
+          itemCount: uniqueProvinces.length,
+          itemBuilder: (context, index) {
+            final provinceName = uniqueProvinces[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProvinceScreen(
+                      provinceName: provinceName,
+                    ),
+                  ),
+                );
+              },
+              child: Card(
+                elevation: 4,
+                shadowColor: Colors.red[700] ,
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    provinceName,
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: uniqueProvinces.length,
-                itemBuilder: (context, index) {
-                  final provinceName = uniqueProvinces[index];
-                  return ListTile(
-                    title: Text(provinceName ?? 'Unknown Province'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProvinceScreen(
-                            provinceName: provinceName,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+            );
+          },
+        ),
+      ),
+    ],
+  ),
+),
+
             ],
           );
         },
