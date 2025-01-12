@@ -2,12 +2,11 @@ import 'package:adm_project/widgets/detail_card.dart';
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import 'province_screen.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 class RegionScreen extends StatelessWidget {
   final String regionName;
 
-  RegionScreen({required this.regionName});
+  const RegionScreen({super.key, required this.regionName});
 
   Future<Map<String, dynamic>> fetchRegionData() async {
     return await fetchRegionDetails(regionName); // API call to get region details
@@ -52,7 +51,6 @@ class RegionScreen extends StatelessWidget {
               .toList();
 
           // Aggregate summaries for the region
-          int totalPopulation = 0;
           int malePopulation = 0;
           int femalePopulation = 0;
           Map<String, int> educationSummary = {
@@ -62,11 +60,10 @@ class RegionScreen extends StatelessWidget {
             "High School": 0,
             "Tertiary": 0,
           };
-          int totalEmployment = 0, maleEmployed = 0, femaleEmployed = 0;
+          int maleEmployed = 0, femaleEmployed = 0;
 
           for (var province in provinces) {
             final population = province['population'] ?? {};
-            totalPopulation += (population['total'] ?? 0) as int;
             malePopulation += (population['male'] ?? 0) as int;
             femalePopulation += (population['female'] ?? 0) as int;
 
@@ -89,7 +86,6 @@ educationSummary['Tertiary'] =
 
 
             final employment = province['employment'] ?? {};
-            totalEmployment += (employment['total_employed'] ?? 0) as int;
             maleEmployed += (employment['male_employed'] ?? 0) as int;
             femaleEmployed += (employment['female_employed'] ?? 0) as int;
           }

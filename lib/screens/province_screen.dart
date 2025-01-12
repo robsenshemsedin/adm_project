@@ -1,17 +1,14 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import 'municipality_screen.dart';
 import '../widgets/detail_card.dart';
-import '../widgets/list_item.dart';
-
-import 'package:flutter/material.dart';
-import 'municipality_screen.dart';
-
 
 class ProvinceScreen extends StatelessWidget {
   final String provinceName;
 
-  ProvinceScreen({required this.provinceName});
+  const ProvinceScreen({super.key, required this.provinceName});
 
   
     Future<Map<String, dynamic>> fetchProvinceData(String name) async {
@@ -56,7 +53,6 @@ class ProvinceScreen extends StatelessWidget {
           final municipalities = provinceData['data'] ?? [];
 
           // Aggregate data for summaries
-          int totalPopulation = 0;
           int malePopulation = 0;
           int femalePopulation = 0;
           Map<String, int> educationSummary = {
@@ -74,7 +70,6 @@ class ProvinceScreen extends StatelessWidget {
 
           for (var municipality in municipalities) {
             final population = municipality['population'] ?? {};
-            totalPopulation += (population['total'] ?? 0) as int;
             malePopulation += (population['male'] ?? 0) as int;
             femalePopulation += (population['female'] ?? 0) as int;
 
@@ -97,8 +92,6 @@ class ProvinceScreen extends StatelessWidget {
                 employmentSummary['male_employed']! + (employment['male_employed'] ?? 0) as int;
             employmentSummary['female_employed'] =
                 employmentSummary['female_employed']! + (employment['female_employed'] ?? 0) as int;
-                final employmentSummarymale = employmentSummary['male_employed'];
-                  final employmentSummaryFemale= employmentSummary['female_employed'];
           }
 
 
@@ -108,60 +101,63 @@ class ProvinceScreen extends StatelessWidget {
                  DetailCard(malePopulation: malePopulation, femalePopulation: femalePopulation, maleEmployed: employmentSummary['male_employed'] as int, femaleEmployed: employmentSummary['female_employed'] as int, educationSummary: educationSummary)
   ,
 
-              Expanded(
-  flex: 1,
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          "Municipalities",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.green[800],
-          ),
-        ),
-      ),
-      Expanded(
-        child: ListView.builder(
-          itemCount:municipalities.length,
-          itemBuilder: (context, index) {
-           final municipality = municipalities[index]['municipality'];
-            return GestureDetector(
-              onTap: () {
-                 Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MunicipalityScreen(
-                            municipalityName: municipality,
-                          ),
-                        ),
-                      );
-              },
-              child: Card(
-                elevation: 4,
-                shadowColor: Colors.red[700] ,
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                     municipality ?? 'Unknown',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-           ),
+  //             Expanded(
+  // flex: 1,
+  // child: Column(
+  //   crossAxisAlignment: CrossAxisAlignment.start,
+  //   children: [
+  //     Padding(
+  //       padding: const EdgeInsets.all(8.0),
+  //       child: Text(
+  //         "Municipalities",
+  //         style: TextStyle(
+  //           fontSize: 18,
+  //           fontWeight: FontWeight.bold,
+  //           color: Colors.green[800],
+  //         ),
+  //       ),
+  //     ),
+  //     Expanded(
+  //       child: ListView.builder(
+  //         itemCount:municipalities.length,
+  //         itemBuilder: (context, index) {
+  //          final municipality = municipalities[index]['municipality'];
+  //           return GestureDetector(
+  //             onTap: () {
+  //                Navigator.push(
+  //                       context,
+  //                       MaterialPageRoute(
+  //                         builder: (context) => MunicipalityScreen(
+  //                           municipalityName: municipality,
+  //                         ),
+  //                       ),
+  //                     );
+  //             },
+  //             child: Card(
+  //               elevation: 4,
+  //               shadowColor: Colors.red[700] ,
+  //               margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+  //               shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //               child: Padding(
+  //                 padding: const EdgeInsets.all(12.0),
+  //                 child: Text(
+  //                    municipality ?? 'Unknown',
+  //                   style: TextStyle(fontSize: 16),
+  //                 ),
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       ),
+  //          ),
             
       
-            ],   ),   ),]  
+  //           ],   ),   ),
+            
+            
+            ]  
           );
         },
       ),
@@ -173,7 +169,7 @@ class _DetailCard extends StatelessWidget {
   final String title;
   final String content;
 
-  _DetailCard({required this.title, required this.content});
+  const _DetailCard({required this.title, required this.content});
 
   @override
   Widget build(BuildContext context) {

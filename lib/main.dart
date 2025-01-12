@@ -6,6 +6,8 @@ void main() {
 }
 
 class CensusApp extends StatelessWidget {
+  const CensusApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

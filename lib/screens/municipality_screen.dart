@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class MunicipalityScreen extends StatelessWidget {
   final String municipalityName;
 
-  MunicipalityScreen({required this.municipalityName});
+  const MunicipalityScreen({super.key, required this.municipalityName});
 
   Future<Map<String, dynamic>> fetchMunicipalityData(String name) async {
     final response = await fetchMunicipalityDetails(name); // Call the endpoint
